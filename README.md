@@ -7,7 +7,6 @@ GroMore 自定义 Adapter，已内含 `FLNAdSDK.xcframework`。
 - iOS 13.0+
 - 内含 `FLNAdSDK` 6.2.0.17
 - `Ads-CN` 7.6.0.0（穿山甲 / GroMore）
-- **不要**同时集成 `MintegralAdapter` / MTGSDK（与 FLNAdSDK 存在 `_where` 符号冲突）
 
 ## 接入
 
