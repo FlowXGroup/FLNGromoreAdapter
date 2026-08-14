@@ -6,7 +6,7 @@ GroMore 自定义 Adapter，已内含 `FLNAdSDK.xcframework`。
 
 - iOS 13.0+
 - 内含 `FLNAdSDK` 6.2.0.17
-- `Ads-CN` 7.6.0.0（穿山甲 / GroMore）
+- `Ads-CN` 7.6.0.4（穿山甲 / GroMore）
 
 ## 接入
 
@@ -17,7 +17,7 @@ pod 'FLNGromoreAdapter',
   :git => 'git@github.com:FlowXGroup/FLNGromoreAdapter.git',
   :tag => '1.0.0'
 
-pod 'Ads-CN', '7.6.0.0', :subspecs => ['BUAdSDK', 'CSJMediation']
+pod 'Ads-CN', '7.6.0.4', :subspecs => ['BUAdSDK', 'CSJMediation']
 ```
 
 ```bash

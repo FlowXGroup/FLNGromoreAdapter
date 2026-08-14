@@ -22,8 +22,8 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Sources/**/*.h'
   s.vendored_frameworks = 'FLNAdSDK.xcframework'
 
-  s.dependency 'Ads-CN/BUAdSDK', '7.6.0.0'
-  s.dependency 'Ads-CN/CSJMediation', '7.6.0.0'
+  s.dependency 'Ads-CN/BUAdSDK', '7.6.0.4'
+  s.dependency 'Ads-CN/CSJMediation', '7.6.0.4'
 
   s.frameworks = 'Foundation', 'UIKit'
   s.libraries  = 'c++', 'z', 'sqlite3', 'xml2'
