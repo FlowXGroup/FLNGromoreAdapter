@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FLNGromoreAdapter'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'GroMore custom adapter for FLNAdSDK (includes FLNAdSDK).'
   s.description      = <<-DESC
     GroMore 自定义 Adapter（开屏 / 插屏 / 激励 / 原生模板）。
@@ -22,8 +22,8 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Sources/**/*.h'
   s.vendored_frameworks = 'FLNAdSDK.xcframework'
 
-  s.dependency 'Ads-CN/BUAdSDK', '7.6.0.4'
-  s.dependency 'Ads-CN/CSJMediation', '7.6.0.4'
+  s.dependency 'Ads-CN/BUAdSDK'
+  s.dependency 'Ads-CN/CSJMediation'
 
   s.frameworks = 'Foundation', 'UIKit'
   s.libraries  = 'c++', 'z', 'sqlite3', 'xml2'
