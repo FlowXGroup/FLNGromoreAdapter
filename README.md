@@ -1,30 +1,39 @@
 # FLNGromoreAdapter
 
-GroMore 自定义 Adapter，已内含 `FLNAdSDK.xcframework`。
+GroMore 自定义 Adapter。依赖 `FLNAdSDK` Pod，不内含 `FLNAdSDK.xcframework`。
 
 ## 要求
 
 - iOS 13.0+
-- 内含 `FLNAdSDK` 6.2.0.17
-- `Ads-CN`（穿山甲 / GroMore，版本由主工程 Podfile 指定，需与 GroMore 接入文档一致）
+- `FLNAdSDK` 6.2.0.18（主工程 Pod 集成，私有源需显式声明）
+- `Ads-CN`（穿山甲 / GroMore，版本由主工程按 GroMore 文档指定）
 
-## 接入
+## 用户接入
+
+在 Podfile 中：
 
 ```ruby
 platform :ios, '13.0'
 
 pod 'FLNGromoreAdapter',
   :git => 'git@github.com:FlowXGroup/FLNGromoreAdapter.git',
-  :tag => '1.0.1'
+  :tag => '1.0.2'
 
-pod 'Ads-CN', :subspecs => ['BUAdSDK', 'CSJMediation']
+# FLNAdSDK 私有源必须显式写，否则 CocoaPods 拉不到
+pod 'FLNAdSDK',
+  :git => 'https://github.com/FlowXGroup/FLNAdSDK-iOS.git',
+  :tag => '6.2.0.18'
+
+pod 'Ads-CN', '7.7.0.5', :subspecs => ['BUAdSDK', 'CSJMediation']
 ```
 
 ```bash
 pod install
 ```
 
-主工程无需再单独拖入 / pod `FLNAdSDK`。
+用 `.xcworkspace` 打开工程。不要再手拖 `FLNAdSDK.xcframework`。
+
+依赖关系：`FLNGromoreAdapter` → `FLNAdSDK`（版本由 Adapter podspec 锁定为 6.2.0.18）。
 
 ## GroMore 控制台类名
 
