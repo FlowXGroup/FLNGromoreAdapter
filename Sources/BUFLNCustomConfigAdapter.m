@@ -41,7 +41,7 @@
 }
 
 - (NSString *)adapterVersion {
-    return @"1.0.3";
+    return @"1.0.4";
 }
 
 - (NSString *)networkSdkVersion {
