@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FLNGromoreAdapter'
-  s.version          = '1.0.4'
+  s.version          = '1.0.5'
   s.summary          = 'GroMore custom adapter for FLNAdSDK.'
   s.description      = <<-DESC
     GroMore 自定义 Adapter（开屏 / 插屏 / 激励 / 原生模板）。
@@ -20,7 +20,8 @@ Pod::Spec.new do |s|
   s.source_files        = 'Sources/**/*.{h,m}'
   s.public_header_files = 'Sources/**/*.h'
 
-  s.dependency 'FLNAdSDK', '6.2.1.11'
+  # 本地 dev/test 可用更新源码/Debug 包；prod 仍由主工程显式指定 git tag
+  s.dependency 'FLNAdSDK', '>= 6.2.2.1'
   s.dependency 'Ads-CN/BUAdSDK'
   s.dependency 'Ads-CN/CSJMediation'
 

@@ -6,6 +6,7 @@
 
 #import "BUFLNCustomNativeAdapter.h"
 #import "BUFLNAdBidUtil.h"
+#import "BUFLNInitHelper.h"
 #import <FLNAdSDK/FLNNativeExpressAd.h>
 #import <FLNAdSDK/FLNNativeExpressAdView.h>
 
@@ -28,25 +29,32 @@
 }
 
 - (void)loadNativeAdWithSlotID:(NSString *)slotID andSize:(CGSize)size imageSize:(CGSize)__unused imageSize parameter:(NSDictionary *)parameter {
-    if (slotID.length == 0) {
-        [self.bridge nativeAd:self didLoadFailWithError:[FLNAdBidUtil errorForEmptySlotID]];
-        return;
-    }
     self.lastLoadParameter = parameter ?: @{};
     self.expressAdLoader = nil;
 
-    NSInteger count = [parameter[BUMAdLoadingParamNALoadAdCount] integerValue];
-    if (count <= 0) {
-        count = 1;
-    }
-    CGFloat width = size.width > 1.0 ? size.width : [UIScreen mainScreen].bounds.size.width;
-    self.expressAdLoader = [[FLNNativeExpressAd alloc] initWithPosId:slotID width:width];
-    self.expressAdLoader.delegate = self;
-    id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
-    if ([timeoutVal respondsToSelector:@selector(doubleValue)] && [timeoutVal doubleValue] > 0) {
-        self.expressAdLoader.timeout = [timeoutVal doubleValue];
-    }
-    [self.expressAdLoader loadAd:count];
+    __weak typeof(self) weakSelf = self;
+    [BUFLNInitHelper ensureReadyForAdLoad:^(BOOL success, NSError * _Nullable error) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            return;
+        }
+        if (!success) {
+            [self.bridge nativeAd:self didLoadFailWithError:error];
+            return;
+        }
+        NSInteger count = [parameter[BUMAdLoadingParamNALoadAdCount] integerValue];
+        if (count <= 0) {
+            count = 1;
+        }
+        CGFloat width = size.width > 1.0 ? size.width : [UIScreen mainScreen].bounds.size.width;
+        self.expressAdLoader = [[FLNNativeExpressAd alloc] initWithPosId:slotID width:width];
+        self.expressAdLoader.delegate = self;
+        id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
+        if ([timeoutVal respondsToSelector:@selector(doubleValue)] && [timeoutVal doubleValue] > 0) {
+            self.expressAdLoader.timeout = [timeoutVal doubleValue];
+        }
+        [self.expressAdLoader loadAd:count];
+    }];
 }
 
 - (void)renderForExpressAdView:(UIView *)expressAdView {

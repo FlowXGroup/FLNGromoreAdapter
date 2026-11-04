@@ -4,6 +4,7 @@
 
 #import "BUFLNCustomSplashAdapter.h"
 #import "BUFLNAdBidUtil.h"
+#import "BUFLNInitHelper.h"
 #import <FLNAdSDK/FLNSplashAd.h>
 
 @interface BUFLNCustomSplashAdapter () <FLNSplashAdDelegate>
@@ -22,22 +23,30 @@
 }
 
 - (void)loadSplashAdWithSlotID:(NSString *)slotID andParameter:(NSDictionary *)parameter {
-    if (slotID.length == 0) {
-        [self.bridge splashAd:self didLoadFailWithError:[FLNAdBidUtil errorForEmptySlotID] ext:@{}];
-        return;
-    }
     self.lastLoadParameter = parameter ?: @{};
     self.customBottomView = parameter[BUMAdLoadingParamSPCustomBottomView];
-    self.splashAd = [[FLNSplashAd alloc] initWithPosId:slotID];
-    self.splashAd.delegate = self;
-    id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
-    if ([timeoutVal respondsToSelector:@selector(doubleValue)]) {
-        NSTimeInterval t = [timeoutVal doubleValue];
-        if (t > 0) {
-            self.splashAd.timeout = t;
+
+    __weak typeof(self) weakSelf = self;
+    [BUFLNInitHelper ensureReadyForAdLoad:^(BOOL success, NSError * _Nullable error) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            return;
         }
-    }
-    [self.splashAd loadAd];
+        if (!success) {
+            [self.bridge splashAd:self didLoadFailWithError:error ext:@{}];
+            return;
+        }
+        self.splashAd = [[FLNSplashAd alloc] initWithPosId:slotID];
+        self.splashAd.delegate = self;
+        id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
+        if ([timeoutVal respondsToSelector:@selector(doubleValue)]) {
+            NSTimeInterval t = [timeoutVal doubleValue];
+            if (t > 0) {
+                self.splashAd.timeout = t;
+            }
+        }
+        [self.splashAd loadAd];
+    }];
 }
 
 - (void)showSplashAdInWindow:(UIWindow *)window parameter:(NSDictionary *)__unused parameter {

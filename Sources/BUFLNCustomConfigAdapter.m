@@ -3,8 +3,8 @@
 //
 
 #import "BUFLNCustomConfigAdapter.h"
+#import "BUFLNInitHelper.h"
 #import <FLNAdSDK/FLNAdSDKManager.h>
-#import <FLNAdSDK/FLNInitConfig.h>
 
 @interface BUFLNCustomConfigAdapter ()
 @property (nonatomic, strong) NSMutableDictionary *flnInitMetrics;
@@ -24,24 +24,12 @@
 }
 
 - (void)initializeAdapterWithConfiguration:(BUMSdkInitConfig *)initConfig {
-    FLNInitConfig *cfg = [[FLNInitConfig alloc] init];
-    cfg.appId = initConfig.appID ?: @"";
-    cfg.userId = @"";
-    CFAbsoluteTime t0 = CFAbsoluteTimeGetCurrent();
-    __weak typeof(self) weakSelf = self;
-    [[FLNAdSDKManager sharedInstance] startWithConfig:cfg completionHandler:^(BOOL success, NSError *_Nullable __unused error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) {
-            return;
-        }
-        NSInteger ms = (NSInteger)((CFAbsoluteTimeGetCurrent() - t0) * 1000.0);
-        self.flnInitMetrics[@"status"] = @(success);
-        self.flnInitMetrics[@"duration"] = @(ms);
-    }];
+    // 只落地 appId；SDK 初始化由各广告 load 前 ensureReadyForAdLoad 完成。
+    [BUFLNInitHelper saveAppId:initConfig.appID];
 }
 
 - (NSString *)adapterVersion {
-    return @"1.0.4";
+    return @"1.0.5";
 }
 
 - (NSString *)networkSdkVersion {

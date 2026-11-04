@@ -4,6 +4,7 @@
 
 #import "BUFLNCustomInterstitialAdapter.h"
 #import "BUFLNAdBidUtil.h"
+#import "BUFLNInitHelper.h"
 #import <FLNAdSDK/FLNInterstitialAd.h>
 
 @interface BUFLNCustomInterstitialAdapter () <FLNInterstitialAdDelegate>
@@ -21,14 +22,22 @@
 }
 
 - (void)loadInterstitialAdWithSlotID:(NSString *)slotID andSize:(CGSize)__unused size parameter:(NSDictionary *)parameter {
-    if (slotID.length == 0) {
-        [self.bridge interstitialAd:self didLoadFailWithError:[FLNAdBidUtil errorForEmptySlotID] ext:@{}];
-        return;
-    }
     self.lastLoadParameter = parameter ?: @{};
-    self.interstitialAd = [[FLNInterstitialAd alloc] initWithPosId:slotID];
-    self.interstitialAd.delegate = self;
-    [self.interstitialAd loadAd];
+
+    __weak typeof(self) weakSelf = self;
+    [BUFLNInitHelper ensureReadyForAdLoad:^(BOOL success, NSError * _Nullable error) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            return;
+        }
+        if (!success) {
+            [self.bridge interstitialAd:self didLoadFailWithError:error ext:@{}];
+            return;
+        }
+        self.interstitialAd = [[FLNInterstitialAd alloc] initWithPosId:slotID];
+        self.interstitialAd.delegate = self;
+        [self.interstitialAd loadAd];
+    }];
 }
 
 - (BOOL)showAdFromRootViewController:(UIViewController *)viewController parameter:(NSDictionary *)__unused parameter {

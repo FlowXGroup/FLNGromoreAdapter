@@ -4,6 +4,7 @@
 
 #import "BUFLNCustomRewardedVideoAdapter.h"
 #import "BUFLNAdBidUtil.h"
+#import "BUFLNInitHelper.h"
 #import <FLNAdSDK/FLNRewardAd.h>
 
 @interface BUFLNCustomRewardedVideoAdapter () <FLNRewardAdDelegate>
@@ -22,22 +23,30 @@
 }
 
 - (void)loadRewardedVideoAdWithSlotID:(NSString *)slotID andParameter:(NSDictionary *)parameter {
-    if (slotID.length == 0) {
-        [self.bridge rewardedVideoAd:self didLoadFailWithError:[FLNAdBidUtil errorForEmptySlotID] ext:@{}];
-        return;
-    }
     self.lastLoadParameter = parameter ?: @{};
     self.didFireVideoDidLoad = NO;
-    self.rewardAd = [[FLNRewardAd alloc] initWithPosId:slotID];
-    self.rewardAd.delegate = self;
-    if ([parameter[BUMAdLoadingParamRVIsMute] respondsToSelector:@selector(boolValue)]) {
-        self.rewardAd.videoMuted = [parameter[BUMAdLoadingParamRVIsMute] boolValue];
-    }
-    id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
-    if ([timeoutVal respondsToSelector:@selector(doubleValue)] && [timeoutVal doubleValue] > 0) {
-        self.rewardAd.timeout = [timeoutVal doubleValue];
-    }
-    [self.rewardAd loadAd];
+
+    __weak typeof(self) weakSelf = self;
+    [BUFLNInitHelper ensureReadyForAdLoad:^(BOOL success, NSError * _Nullable error) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            return;
+        }
+        if (!success) {
+            [self.bridge rewardedVideoAd:self didLoadFailWithError:error ext:@{}];
+            return;
+        }
+        self.rewardAd = [[FLNRewardAd alloc] initWithPosId:slotID];
+        self.rewardAd.delegate = self;
+        if ([parameter[BUMAdLoadingParamRVIsMute] respondsToSelector:@selector(boolValue)]) {
+            self.rewardAd.videoMuted = [parameter[BUMAdLoadingParamRVIsMute] boolValue];
+        }
+        id timeoutVal = parameter[BUMAdLoadingParamSPTolerateTimeout];
+        if ([timeoutVal respondsToSelector:@selector(doubleValue)] && [timeoutVal doubleValue] > 0) {
+            self.rewardAd.timeout = [timeoutVal doubleValue];
+        }
+        [self.rewardAd loadAd];
+    }];
 }
 
 - (BOOL)showAdFromRootViewController:(UIViewController *)viewController parameter:(NSDictionary *)__unused parameter {
