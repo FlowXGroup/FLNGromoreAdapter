@@ -17,7 +17,7 @@ platform :ios, '13.0'
 
 pod 'FLNGromoreAdapter',
   :git => 'git@github.com:FlowXGroup/FLNGromoreAdapter.git',
-  :tag => '1.0.5'
+  :tag => '1.0.6'
 
 # FLNAdSDK 私有源必须显式写，否则 CocoaPods 拉不到
 pod 'FLNAdSDK',

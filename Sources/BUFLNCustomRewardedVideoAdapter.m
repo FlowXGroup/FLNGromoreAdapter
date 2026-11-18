@@ -64,12 +64,17 @@
 #pragma mark - FLNRewardAdDelegate
 
 - (void)rewardVideoAdDidLoad:(FLNRewardAd *)rewardedAd {
-    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:[rewardedAd eCPM] parameter:self.lastLoadParameter];
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:[rewardedAd eCPM]
+                                            requestId:rewardedAd.requestId
+                                            parameter:self.lastLoadParameter];
     [self.bridge rewardedVideoAd:self didLoadWithExt:ext];
 }
 
-- (void)rewardVideoAd:(FLNRewardAd *)__unused rewardedAd didFailWithError:(NSError *)error {
-    [self.bridge rewardedVideoAd:self didLoadFailWithError:error ext:@{}];
+- (void)rewardVideoAd:(FLNRewardAd *)rewardedAd didFailWithError:(NSError *)error {
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:-1
+                                            requestId:rewardedAd.requestId
+                                            parameter:nil];
+    [self.bridge rewardedVideoAd:self didLoadFailWithError:error ext:ext];
 }
 
 - (void)rewardVideoAdReadyToPlay:(FLNRewardAd *)__unused rewardedAd {

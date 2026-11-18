@@ -27,16 +27,23 @@
     return [num stringValue];
 }
 
-+ (NSDictionary *)loadExtWithECPM:(float)ecpm parameter:(NSDictionary *)parameter {
++ (NSDictionary *)loadExtWithECPM:(float)ecpm
+                        requestId:(NSString *)requestId
+                        parameter:(NSDictionary *)parameter {
+    NSMutableDictionary *ext = [NSMutableDictionary dictionary];
     NSString *price = [self ecpmString:ecpm];
-    if (!price) {
-        return @{};
+    if (price) {
+        BUMBiddingType biddingType = [parameter[BUMAdLoadingParamBiddingType] integerValue];
+        if (biddingType == BUMBiddingTypeMulti) {
+            ext[BUMMediaAdLoadingExtECPMLevel] = price;
+        } else {
+            ext[BUMMediaAdLoadingExtECPM] = price;
+        }
     }
-    BUMBiddingType biddingType = [parameter[BUMAdLoadingParamBiddingType] integerValue];
-    if (biddingType == BUMBiddingTypeMulti) {
-        return @{ BUMMediaAdLoadingExtECPMLevel : price };
+    if (requestId.length > 0) {
+        ext[BUMMediaAdLoadingExtRequestID] = requestId;
     }
-    return @{ BUMMediaAdLoadingExtECPM : price };
+    return [ext copy];
 }
 
 + (NSString *)mappedWinnerAdn:(NSString *)winnerAdnID {

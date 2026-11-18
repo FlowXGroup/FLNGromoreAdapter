@@ -68,12 +68,17 @@
 #pragma mark - FLNSplashAdDelegate
 
 - (void)splashAdDidLoad:(FLNSplashAd *)splashAd {
-    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:[splashAd eCPM] parameter:self.lastLoadParameter];
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:splashAd.eCPM
+                                            requestId:splashAd.requestId
+                                            parameter:self.lastLoadParameter];
     [self.bridge splashAd:self didLoadWithExt:ext];
 }
 
-- (void)splashAdLoadFail:(FLNSplashAd *)__unused splashAd error:(NSError *)error {
-    [self.bridge splashAd:self didLoadFailWithError:error ext:@{}];
+- (void)splashAdLoadFail:(FLNSplashAd *)splashAd error:(NSError *)error {
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:-1
+                                            requestId:splashAd.requestId
+                                            parameter:nil];
+    [self.bridge splashAd:self didLoadFailWithError:error ext:ext];
 }
 
 - (void)splashAdDidShow:(FLNSplashAd *)__unused splashAd {

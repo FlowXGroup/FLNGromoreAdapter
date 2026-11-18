@@ -87,7 +87,9 @@
 - (void)nativeExpressAdViewRenderSuccess:(FLNNativeExpressAd *)__unused nativeExpressAd nativeExpressAdView:(NSArray<FLNNativeExpressAdView *> *)nativeExpressAdViews {
     NSMutableArray *exts = [NSMutableArray array];
     for (FLNNativeExpressAdView *view in nativeExpressAdViews) {
-        [exts addObject:[FLNAdBidUtil loadExtWithECPM:[view eCPM] parameter:self.lastLoadParameter]];
+        [exts addObject:[FLNAdBidUtil loadExtWithECPM:[view eCPM]
+                                            requestId:view.requestId
+                                            parameter:self.lastLoadParameter]];
     }
     [self.bridge nativeAd:self didLoadWithExpressViews:nativeExpressAdViews exts:[exts copy]];
 }

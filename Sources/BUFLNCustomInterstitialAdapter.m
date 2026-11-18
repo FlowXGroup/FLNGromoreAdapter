@@ -55,12 +55,17 @@
 #pragma mark - FLNInterstitialAdDelegate
 
 - (void)interstitialAdDidLoad:(FLNInterstitialAd *)interstitialAd {
-    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:[interstitialAd eCPM] parameter:self.lastLoadParameter];
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:[interstitialAd eCPM]
+                                            requestId:interstitialAd.requestId
+                                            parameter:self.lastLoadParameter];
     [self.bridge interstitialAd:self didLoadWithExt:ext];
 }
 
-- (void)interstitialAd:(FLNInterstitialAd *)__unused interstitialAd didFailWithError:(NSError *)error {
-    [self.bridge interstitialAd:self didLoadFailWithError:error ext:@{}];
+- (void)interstitialAd:(FLNInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
+    NSDictionary *ext = [FLNAdBidUtil loadExtWithECPM:-1
+                                            requestId:interstitialAd.requestId
+                                            parameter:nil];
+    [self.bridge interstitialAd:self didLoadFailWithError:error ext:ext];
 }
 
 - (void)interstitialAdDidShow:(FLNInterstitialAd *)__unused interstitial {

@@ -12,8 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSError *)errorForEmptySlotID;
 
-/// 将 eCPM（分，可小数）转为 GroMore load ext；无效（<0）返回空字典
-+ (NSDictionary *)loadExtWithECPM:(float)ecpm parameter:(nullable NSDictionary *)parameter;
+/// 将 eCPM（分，可小数）与 requestId 转为 GroMore load ext。
+/// eCPM 无效（<0）时不写价格。requestId 非空时同时写入 BUMMediaAdLoadingExtRequestID。
++ (NSDictionary *)loadExtWithECPM:(float)ecpm
+                        requestId:(nullable NSString *)requestId
+                        parameter:(nullable NSDictionary *)parameter;
 
 /// 透传竞胜/竞败到 FLNAdProtocol（second_price / winner_price / winner_adn / loss_reason）。
 /// 对齐 FLNAdSDK 6.2.1.11：value 均为 NSString，价格单位分。
